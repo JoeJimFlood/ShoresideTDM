@@ -3,7 +3,6 @@ time_start = time.time()
 
 import numpy as np
 import pandas as pd
-from scipy.stats.distributions import vonmises as vm
 import os
 
 BASE_PATH = os.path.split(os.path.split(os.path.realpath(__file__))[0])[0]
