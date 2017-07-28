@@ -29,10 +29,13 @@ for type in range(1, 5):
 
 #Distribute productions and attractions according to area shares within node purposes
 nodes['TypeShare'] = nodes['Area'] / nodes['Type'].map(area_map)
-nodes['WorkProductions'] = nodes['TypeShare'] * nodes['Type'].map(productions['Work'])
-nodes['RecProductions'] = nodes['TypeShare'] * nodes['Type'].map(productions['Rec'])
-nodes['WorkAttractions'] = nodes['TypeShare'] * nodes['Type'].map(attractions['Work'])
-nodes['RecAttractions'] = nodes['TypeShare'] * nodes['Type'].map(attractions['Rec'])
+for purpose in productions.columns:
+    nodes[purpose + 'Productions'] = nodes['TypeShare'] * nodes['Type'].map(productions[purpose])
+    nodes[purpose + 'Attractions'] = nodes['TypeShare'] * nodes['Type'].map(attractions[purpose])
+#nodes['WorkProductions'] = nodes['TypeShare'] * nodes['Type'].map(productions['Work'])
+#nodes['RecProductions'] = nodes['TypeShare'] * nodes['Type'].map(productions['Rec'])
+#nodes['WorkAttractions'] = nodes['TypeShare'] * nodes['Type'].map(attractions['Work'])
+#nodes['RecAttractions'] = nodes['TypeShare'] * nodes['Type'].map(attractions['Rec'])
 
 #Write output to file
 nodes.to_csv(GENERATION_OUTPUT_FILE)
