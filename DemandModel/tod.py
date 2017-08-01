@@ -100,6 +100,5 @@ for period in time_periods.index:
         total_period_trips = period_trips.sum(0)
         trip_share = period_trips.sum(1).sum(0)
         trip_share /= trip_share.sum()
-        print(trip_share)
 
 print('Done')

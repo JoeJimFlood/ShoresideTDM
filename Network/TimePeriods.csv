@@ -1,5 +1,6 @@
 Period,Start,End,DTA
 AM,7,9,1
 MD,9,16,0
-PM,16,21,1
+PM,16,18,1
+EV,18,21,0
 NT,21,7,0
