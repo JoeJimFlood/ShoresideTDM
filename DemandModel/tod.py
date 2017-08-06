@@ -99,6 +99,7 @@ for purpose in purposes:
                     total_trips.ix[:, int(d_node), int(o_node)] += daily_trips*props
 
 for period in time_periods.index:
+
     start = time_periods.loc[period, 'Start']
     end = time_periods.loc[period, 'End']
     DTA = time_periods.loc[period, 'DTA']
@@ -115,16 +116,15 @@ for period in time_periods.index:
         INPUT_DEMAND_FILE = os.path.join(BASE_PATH, r'TimePeriods\{}\input_demand.csv'.format(period))
         INPUT_DEMAND_FILE_LIST_FILE = INPUT_DEMAND_FILE.replace('.csv', '_file_list.csv')
 
-        input_demand = pd.read_csv(INPUT_DEMAND_FILE)
         input_demand_file_list = pd.read_csv(INPUT_DEMAND_FILE_LIST_FILE)
 
-        #Update input demand
-        for i in input_demand.index:
-            origin = input_demand.loc[i, 'from_zone_id']
-            destination = input_demand.loc[i, 'to_zone_id']
-            input_demand.loc[i, 'number_of_trips_demand_type1'] = round(total_period_trips.loc[origin, destination])
-
-        input_demand.set_index('from_zone_id').to_csv(INPUT_DEMAND_FILE)
+        node_list = total_period_trips.index.tolist()
+        N = len(node_list)
+        input_demand = pd.melt(total_period_trips)
+        input_demand['from_zone_id'] = input_demand['Node']
+        input_demand['to_zone_id'] = N*node_list
+        input_demand['number_of_trips_demand_type1'] = input_demand['value']
+        input_demand.set_index('from_zone_id')[['to_zone_id', 'number_of_trips_demand_type1']].to_csv(INPUT_DEMAND_FILE)
 
         for t in np.arange(0, 24, 0.25):
             input_demand_file_list.loc[0, convert_time_format(t)] = 0
