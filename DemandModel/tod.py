@@ -1,3 +1,6 @@
+import time
+time_start = time.time()
+
 import os
 import numpy as np
 import pandas as pd
@@ -24,6 +27,16 @@ def cdf(peaks, start, end):
         kappa = peaks.loc[peak, 'Concentration']
         out += contribution*(vm.cdf(end, kappa, loc = mu) - vm.cdf(start, kappa, loc = mu))
     return out
+
+def convert_time_format(t):
+    '''
+    CONVERTS TIME!
+    '''
+    minute_map = {0: '00', 0.25: '15', 0.5: '30', 0.75: '45'}
+    hour = str(int(t // 1) % 24)
+    hour = (2 - len(hour))*'0' + hour
+    minute = minute_map[t % 1]
+    return "'{0}:{1}".format(hour, minute)
 
 attractions = pd.read_csv(ATTRACTIONS_FILE, index_col = 0)
 purposes = attractions.columns.tolist()
@@ -85,8 +98,6 @@ for purpose in purposes:
                 else:
                     total_trips.ix[:, int(d_node), int(o_node)] += daily_trips*props
 
-print('Creating Time-specific trip tables')
-
 for period in time_periods.index:
     start = time_periods.loc[period, 'Start']
     end = time_periods.loc[period, 'End']
@@ -101,8 +112,28 @@ for period in time_periods.index:
         trip_share = period_trips.sum(1).sum(0)
         trip_share /= trip_share.sum()
 
-        
+        INPUT_DEMAND_FILE = os.path.join(BASE_PATH, r'TimePeriods\{}\input_demand.csv'.format(period))
+        INPUT_DEMAND_FILE_LIST_FILE = INPUT_DEMAND_FILE.replace('.csv', '_file_list.csv')
 
-        
+        input_demand = pd.read_csv(INPUT_DEMAND_FILE)
+        input_demand_file_list = pd.read_csv(INPUT_DEMAND_FILE_LIST_FILE)
 
-print('Done')
+        #Update input demand
+        for i in input_demand.index:
+            origin = input_demand.loc[i, 'from_zone_id']
+            destination = input_demand.loc[i, 'to_zone_id']
+            input_demand.loc[i, 'number_of_trips_demand_type1'] = round(total_period_trips.loc[origin, destination])
+
+        input_demand.set_index('from_zone_id').to_csv(INPUT_DEMAND_FILE)
+
+        for t in np.arange(0, 24, 0.25):
+            input_demand_file_list.loc[0, convert_time_format(t)] = 0
+
+        for t in np.arange(time_periods.loc[period, 'Start'], time_periods.loc[period, 'End'], 0.25):
+            input_demand_file_list.loc[0, convert_time_format(t)] = trip_share[t]
+
+        input_demand_file_list.set_index('scenario_no').to_csv(INPUT_DEMAND_FILE_LIST_FILE)
+
+time_end = time.time()
+runtime = round(time_end - time_start, 1)
+print('Time of Day Modeling Complete in {} seconds'.format(runtime))
