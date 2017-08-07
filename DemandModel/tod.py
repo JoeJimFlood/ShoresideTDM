@@ -123,8 +123,11 @@ for period in time_periods.index:
         input_demand = pd.melt(total_period_trips)
         input_demand['from_zone_id'] = input_demand['Node']
         input_demand['to_zone_id'] = N*node_list
-        input_demand['number_of_trips_demand_type1'] = input_demand['value']
+        input_demand['number_of_trips_demand_type1'] = input_demand['value'].round(0)
         input_demand.set_index('from_zone_id')[['to_zone_id', 'number_of_trips_demand_type1']].to_csv(INPUT_DEMAND_FILE)
+
+        input_demand_file_list['start_time_in_min'] = int(time_periods.loc[period, 'Start']*60)
+        input_demand_file_list['end_time_in_min'] = int(time_periods.loc[period, 'End']*60)
 
         for t in np.arange(0, 24, 0.25):
             input_demand_file_list.loc[0, convert_time_format(t)] = 0
