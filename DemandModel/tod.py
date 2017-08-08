@@ -23,9 +23,9 @@ def cdf(peaks, start, end):
     out = 0
     for peak in peaks.index:
         contribution = peaks.loc[peak, 'Contribution']
-        mu = peaks.loc[peak, 'Mean']*np.pi/12
+        mu = peaks.loc[peak, 'Mean']*pi/12
         kappa = peaks.loc[peak, 'Concentration']
-        out += contribution*(vm.cdf(end, kappa, loc = mu) - vm.cdf(start, kappa, loc = mu))
+        out += contribution*(vm.cdf(end*pi/12, kappa, loc = mu) - vm.cdf(start*pi/12, kappa, loc = mu))
     return out
 
 def convert_time_format(t):
@@ -93,7 +93,7 @@ for purpose in purposes:
         for o_node in origin_nodes:
             for d_node in destination_nodes:
                 daily_trips = trip_tables[purpose].loc[o_node, d_node]
-                if not direction:
+                if direction:
                     total_trips.ix[:, int(o_node), int(d_node)] += daily_trips*props
                 else:
                     total_trips.ix[:, int(d_node), int(o_node)] += daily_trips*props
@@ -108,6 +108,7 @@ for period in time_periods.index:
         total_trips[start, :, :].to_csv(os.path.join(BASE_PATH, r'TimePeriods\{}\trip_table.csv'.format(period)))
 
     else:
+        
         period_trips = total_trips[np.arange(start, end, 0.25)]
         total_period_trips = period_trips.sum(0)
         trip_share = period_trips.sum(1).sum(0)
