@@ -40,7 +40,7 @@ class link:
         self.angle = np.angle(u[0] + 1j*u[1])
         
         self.ffs = ffs
-        self.travel_time = 60 * self.length / self.ffs
+        self.travel_time = (60 * self.length / self.ffs) + (destination.cycle_length / 120)
 
         self.origin.olinks.append(self)
         self.destination.dlinks.append(self)
