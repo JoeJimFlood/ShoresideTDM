@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import os
 
 class node:
     def __init__(self, id, x, y, cycle_length):
@@ -195,7 +196,33 @@ class network:
 
         return cls(links)
 
-node_file = r'D:\ShoresideTDM\TimePeriods\AM\input_node.csv'
-link_file = node_file.replace('node', 'link')
-Shoreside = network.from_files(node_file, link_file)
-print('Go')
+NODE_FILE = r'D:\ShoresideTDM\TimePeriods\AM\input_node.csv'
+LINK_FILE = NODE_FILE.replace('node', 'link')
+Shoreside = network.from_files(NODE_FILE, LINK_FILE)
+
+TIME_PERIOD_FILE = r'D:\ShoresideTDM\Network\TimePeriods.csv'
+time_periods = pd.read_csv(TIME_PERIOD_FILE)
+
+links = pd.read_csv(LINK_FILE, encoding = 'ISO-8859-1')
+
+for period in time_periods.index:
+    name = time_periods.loc[period, 'Period']
+    dta = time_periods.loc[period, 'DTA']
+    if not dta:
+        
+        TRIP_TABLE_FILE = r'D:\ShoresideTDM\TimePeriods\{}\trip_table.csv'.format(name)
+        trip_table = pd.read_csv(TRIP_TABLE_FILE, index_col = 0)
+
+        flows = pd.Series(np.zeros_like(links.index), links['link_id'], dtype = np.float64)
+
+        for onode in trip_table.index:
+            for dnode in trip_table.columns:
+                if trip_table.loc[onode, dnode]:
+                    origin = Shoreside.find_node(onode)
+                    destination = Shoreside.find_node(int(dnode))
+                    route = Shoreside.get_shortest_route(origin, destination)
+
+                    for l in route:
+                        flows[l.id] += trip_table.loc[onode, dnode]
+
+        raise Exception
