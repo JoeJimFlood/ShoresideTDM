@@ -19,6 +19,9 @@ class node:
         self.olinks = []
         self.dlinks = []
 
+    def __repr__(self):
+        return 'Node {0} at ({1}, {2})'.format(self.id, self.x, self.y)
+
 class link:
     def __init__(self, origin, destination, id, ffs):
         '''
@@ -46,6 +49,9 @@ class link:
         self.origin.olinks.append(self)
         self.destination.dlinks.append(self)
 
+    def __repr__(self):
+        return 'Link {0} from Node {1} to Node {2}'.format(self.id, self.origin.id, self.destination.id)
+
 class network:
     def __init__(self, links):
         '''
@@ -63,6 +69,24 @@ class network:
                 nodes.append(l.destination)
         #nodes.sort()
         self.nodes = nodes
+        self.prohibited_movements = {}
+
+    def prohibit_movements(self, movement_file):
+        '''
+
+        '''
+        movements = pd.read_csv(movement_file)
+        prohibited_movements = {}
+        for m in movements[movements['prohibited_flag'] == 1].index:
+            first = movements.loc[m, 'up_node_id']
+            second = movements.loc[m, 'node_id']
+            third = movements.loc[m, 'dest_node_id']
+            link1 = self.find_connector(self.find_node(first), self.find_node(second))
+            link2 = self.find_connector(self.find_node(second), self.find_node(third))
+            if link1 not in prohibited_movements:
+                prohibited_movements[link1] = []
+            prohibited_movements[link1].append(link2)
+        self.prohibited_movements = prohibited_movements
 
     def find_connector(self, origin, destination):
         '''
@@ -80,7 +104,11 @@ class network:
             if l.destination == destination:
                 connecting_link = l
                 break
-        return connecting_link
+        try:
+            return connecting_link
+        except UnboundLocalError:
+            print('WARNING: No link found connecting nodes {0} and {1}'.format(origin.id, destination.id))
+            return None
 
     def get_adjacent_nodes(self, origin):
         '''
@@ -122,13 +150,12 @@ class network:
 
         for n in can_visit:
             visited.append(n)
-            #print n.id
             for l in n.olinks:
                 c = node_costs[n] + l.travel_time
                 if c < node_costs[l.destination]:
                     node_costs[l.destination] = c
                     paths[l.destination] = paths[l.origin] + [l.origin]
-
+                        
             new_nodes = self.get_adjacent_nodes(n)
             for nn in new_nodes:
                 if nn not in can_visit and nn not in visited:
@@ -168,7 +195,7 @@ class network:
             nodes.append(node(id, x, y, cycle_length))
 
         links = []
-        link_df = pd.read_csv(link_file, encoding = "ISO-8859-1")
+        link_df = pd.read_csv(link_file, encoding = 'ISO-8859-1')
         for l in link_df.index:
             origin_node_id = link_df.loc[l, 'from_node_id']
             destination_node_id = link_df.loc[l, 'to_node_id']
@@ -194,16 +221,26 @@ class network:
                 import pdb
                 pdb.set_trace()
 
+        
+
         return cls(links)
 
 NODE_FILE = r'D:\ShoresideTDM\TimePeriods\AM\input_node.csv'
 LINK_FILE = NODE_FILE.replace('node', 'link')
+MOVEMENT_FILE = LINK_FILE.replace('link', 'movement')
 Shoreside = network.from_files(NODE_FILE, LINK_FILE)
-
+Shoreside.prohibit_movements(MOVEMENT_FILE)
 TIME_PERIOD_FILE = r'D:\ShoresideTDM\Network\TimePeriods.csv'
 time_periods = pd.read_csv(TIME_PERIOD_FILE)
 
 links = pd.read_csv(LINK_FILE, encoding = 'ISO-8859-1')
+
+#origin = Shoreside.find_node(16)
+#destination = Shoreside.find_node(26)
+#shortest_route = Shoreside.get_shortest_route(origin, destination)
+#for l in shortest_route:
+#    print(l)
+
 
 for period in time_periods.index:
     name = time_periods.loc[period, 'Period']
