@@ -242,11 +242,17 @@ links = pd.read_csv(LINK_FILE, encoding = 'ISO-8859-1')
 #    print(l)
 
 
+link_flows = pd.DataFrame()
+
 for period in time_periods.index:
     name = time_periods.loc[period, 'Period']
+
+    
+
     dta = time_periods.loc[period, 'DTA']
     if not dta:
-        
+
+        print('Performing {} assignment'.format(name))
         TRIP_TABLE_FILE = r'D:\ShoresideTDM\TimePeriods\{}\trip_table.csv'.format(name)
         trip_table = pd.read_csv(TRIP_TABLE_FILE, index_col = 0)
 
@@ -262,4 +268,8 @@ for period in time_periods.index:
                     for l in route:
                         flows[l.id] += trip_table.loc[onode, dnode]
 
-        raise Exception
+        link_flows[name] = flows
+
+link_flows.to_csv(r'D:\ShoresideTDM\Output\StaticLinkFlows.csv')
+
+print('Done')
