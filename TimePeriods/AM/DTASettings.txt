@@ -62,6 +62,8 @@ day_by_day_output_starting_iteration=100
 '13:45=1
 '14:00=1
 '14:15=1
+'06:00=1
+'06:15=1
 [computation]
 max_number_of_threads_for_real_time_routing=1
 max_number_of_threads_to_be_used=8

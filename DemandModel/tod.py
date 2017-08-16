@@ -16,6 +16,8 @@ TIME_PERIOD_FILE = os.path.join(NETWORK_PATH, 'TimePeriods.csv')
 NODE_INFO_FILE = os.path.join(NETWORK_PATH, 'node_info.csv')
 PEAK_FILE = os.path.join(NETWORK_PATH, 'peaks.csv')
 
+DTA_START_UP_TIME = 1 #Time to set up DTA in hours
+
 def cdf(peaks, start, end):
     '''
     Computes the cdf between two time points for the given combination of Von Mises distributions
@@ -45,58 +47,74 @@ time_periods = pd.read_csv(TIME_PERIOD_FILE, index_col = 0)
 peaks = pd.read_csv(PEAK_FILE)
 node_info = pd.read_csv(NODE_INFO_FILE, index_col = 0)
 
-breaks = []
+breaks = {}
 for period in time_periods.index:
     start = time_periods.loc[period, 'Start']
     end = time_periods.loc[period, 'End']
     DTA = time_periods.loc[period, 'DTA']
 
     if DTA:
-        breaks += list(np.arange(start, end, 0.25))
+        breaks[period] = list(np.arange(start - DTA_START_UP_TIME, end, 0.25))
 
     else:
-        breaks += [start]
+        breaks[period] = [start]
 
 N = len(node_info.index)
-T = len(breaks)
 
-total_trips = pd.Panel(np.zeros((T, N, N)), breaks, node_info.index, node_info.index)
+total_trips = {}
+for period in time_periods.index:
+    T = len(breaks[period])
+    total_trips[period] = pd.Panel(np.zeros((T, N, N)), breaks[period], node_info.index, node_info.index)
 
 trip_tables = {}
-for purpose in purposes:
+for period in time_periods.index:
     
-    starts = pi/12*np.array(breaks)
-    ends = pi/12*np.array(breaks[1:] + [breaks[0] + 24])
-    trip_tables[purpose] = pd.read_csv(os.path.join(OUTPUT_PATH, '{}_trip_table.csv'.format(purpose)), index_col = 0)
+    trip_tables[period] = {}
+    DTA = time_periods.loc[period, 'DTA']
 
-    total_origins = trip_tables[purpose].sum(1)
-    total_destinations = trip_tables[purpose].sum(0)
+    for purpose in purposes:
+    
+        if DTA:
+            starts = pi/12*np.array(breaks[period])
+            ends = pi/12*np.array(breaks[period][1:] + [breaks[period][-1] + 0.25])
+        else:
+            starts = pi/12*np.array(time_periods.loc[period, ['Start']])
+            ends = pi/12*np.array(time_periods.loc[period, ['End']])
+            if ends[0] < starts[0]:
+                ends += 2*pi
+        trip_tables[purpose] = pd.read_csv(os.path.join(OUTPUT_PATH, '{}_trip_table.csv'.format(purpose)), index_col = 0)
 
-    origin_nodes = total_origins[total_origins > 0].index.tolist()
-    destination_nodes = total_destinations[total_destinations > 0].index.tolist()
+        total_origins = trip_tables[purpose].sum(1)
+        total_destinations = trip_tables[purpose].sum(0)
 
-    purpose_peaks = peaks[peaks['Purpose'] == purpose]
+        origin_nodes = total_origins[total_origins > 0].index.tolist()
+        destination_nodes = total_destinations[total_destinations > 0].index.tolist()
 
-    for direction in list(range(2)):
+        purpose_peaks = peaks[peaks['Purpose'] == purpose]
+
+        for direction in list(range(2)):
         
-        purpose_direction_peaks = purpose_peaks[purpose_peaks['Direction'] == direction]
+            purpose_direction_peaks = purpose_peaks[purpose_peaks['Direction'] == direction]
 
-        props = np.zeros_like(starts)
-        for peak in purpose_direction_peaks.index:
-            current_peak = purpose_direction_peaks.loc[peak]
-            contribution = current_peak['Contribution']
-            mean = current_peak['Mean']*pi/12
-            concentration = current_peak['Concentration']
-            peak_props = vm.cdf(ends, concentration, loc = mean) - vm.cdf(starts, concentration, loc = mean)
-            props += contribution*peak_props
+            props = np.zeros_like(starts)
+            for peak in purpose_direction_peaks.index:
+                current_peak = purpose_direction_peaks.loc[peak]
+                contribution = current_peak['Contribution']
+                mean = current_peak['Mean']*pi/12
+                concentration = current_peak['Concentration']
+                peak_props = vm.cdf(ends, concentration, loc = mean) - vm.cdf(starts, concentration, loc = mean)
+                props += contribution*peak_props
 
-        for o_node in origin_nodes:
-            for d_node in destination_nodes:
-                daily_trips = trip_tables[purpose].loc[o_node, d_node]
-                if direction:
-                    total_trips.ix[:, int(o_node), int(d_node)] += daily_trips*props
-                else:
-                    total_trips.ix[:, int(d_node), int(o_node)] += daily_trips*props
+            for o_node in origin_nodes:
+                for d_node in destination_nodes:
+                    daily_trips = trip_tables[purpose].loc[o_node, d_node]
+                    try:
+                        if direction:
+                            total_trips[period].ix[:, int(o_node), int(d_node)] += daily_trips*props
+                        else:
+                            total_trips[period].ix[:, int(d_node), int(o_node)] += daily_trips*props
+                    except KeyError:
+                        continue
 
 for period in time_periods.index:
 
@@ -105,11 +123,11 @@ for period in time_periods.index:
     DTA = time_periods.loc[period, 'DTA']
 
     if not DTA:
-        total_trips[start, :, :].to_csv(os.path.join(BASE_PATH, r'TimePeriods\{}\trip_table.csv'.format(period)))
+        total_trips[period][start].to_csv(os.path.join(BASE_PATH, r'TimePeriods\{}\trip_table.csv'.format(period)))
 
     else:
         
-        period_trips = total_trips[np.arange(start, end, 0.25)]
+        period_trips = total_trips[period]
         total_period_trips = period_trips.sum(0)
         trip_share = period_trips.sum(1).sum(0)
         trip_share /= trip_share.sum()
@@ -127,13 +145,13 @@ for period in time_periods.index:
         input_demand['number_of_trips_demand_type1'] = input_demand['value'].round(0)
         input_demand.set_index('from_zone_id')[['to_zone_id', 'number_of_trips_demand_type1']].to_csv(INPUT_DEMAND_FILE)
 
-        input_demand_file_list['start_time_in_min'] = int(time_periods.loc[period, 'Start']*60)
+        input_demand_file_list['start_time_in_min'] = int((time_periods.loc[period, 'Start'] - DTA_START_UP_TIME)*60)
         input_demand_file_list['end_time_in_min'] = int(time_periods.loc[period, 'End']*60)
 
         for t in np.arange(0, 24, 0.25):
             input_demand_file_list.loc[0, convert_time_format(t)] = 0
 
-        for t in np.arange(time_periods.loc[period, 'Start'], time_periods.loc[period, 'End'], 0.25):
+        for t in np.arange(time_periods.loc[period, 'Start'] - DTA_START_UP_TIME, time_periods.loc[period, 'End'], 0.25):
             input_demand_file_list.loc[0, convert_time_format(t)] = trip_share[t]
 
         input_demand_file_list.set_index('scenario_no').to_csv(INPUT_DEMAND_FILE_LIST_FILE)

@@ -21,3 +21,4 @@ for node in activity.index:
     activity_location.loc[node] = list(activity[['Zone', 'Node', 'External']].loc[node])
 
 activity_location.set_index('zone_id').to_csv(activity_location_file)
+print('Done')
