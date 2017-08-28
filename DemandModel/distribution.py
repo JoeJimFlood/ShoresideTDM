@@ -47,7 +47,6 @@ for purpose in attractions.columns:
     for onode in external_nodes.index:
         for dnode in external_nodes.index:
             ee_trips = EE*external_nodes.loc[onode, 'Percent']*external_nodes.loc[dnode, 'Percent']
-            print(onode, dnode, ee_trips)
             trip_table.loc[onode, dnode] += ee_trips
 
     trip_table.to_csv(os.path.join(OUTPUT_PATH, purpose + '_trip_table.csv'))
