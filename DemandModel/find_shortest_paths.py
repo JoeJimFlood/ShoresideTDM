@@ -1,3 +1,6 @@
+import time
+start_time = time.time()
+
 import numpy as np
 import pandas as pd
 import os
@@ -229,7 +232,6 @@ NODE_FILE = r'D:\ShoresideTDM\TimePeriods\AM\input_node.csv'
 LINK_FILE = NODE_FILE.replace('node', 'link')
 MOVEMENT_FILE = LINK_FILE.replace('link', 'movement')
 Shoreside = network.from_files(NODE_FILE, LINK_FILE)
-Shoreside.prohibit_movements(MOVEMENT_FILE)
 TIME_PERIOD_FILE = r'D:\ShoresideTDM\Network\TimePeriods.csv'
 time_periods = pd.read_csv(TIME_PERIOD_FILE)
 
@@ -242,34 +244,39 @@ links = pd.read_csv(LINK_FILE, encoding = 'ISO-8859-1')
 #    print(l)
 
 
-link_flows = pd.DataFrame()
+
+
+trip_table = {}
+static_periods = []
 
 for period in time_periods.index:
-    name = time_periods.loc[period, 'Period']
-
-    
-
-    dta = time_periods.loc[period, 'DTA']
-    if not dta:
-
-        print('Performing {} assignment'.format(name))
+    static = not time_periods.loc[period, 'DTA']
+    if static:
+        name = time_periods.loc[period, 'Period']
+        static_periods.append(name)
         TRIP_TABLE_FILE = r'D:\ShoresideTDM\TimePeriods\{}\trip_table.csv'.format(name)
-        trip_table = pd.read_csv(TRIP_TABLE_FILE, index_col = 0)
+        trip_table[name] = pd.read_csv(TRIP_TABLE_FILE, index_col = 0)
 
-        flows = pd.Series(np.zeros_like(links.index), links['link_id'], dtype = np.float64)
+#flows = pd.Series(np.zeros_like(links.index), links['link_id'], dtype = np.float64)
+link_flows = pd.DataFrame(np.zeros((len(links.index), len(static_periods)), dtype = np.float64), index = links['link_id'], columns = static_periods)
 
-        for onode in trip_table.index:
-            for dnode in trip_table.columns:
-                if trip_table.loc[onode, dnode]:
-                    origin = Shoreside.find_node(onode)
-                    destination = Shoreside.find_node(int(dnode))
-                    route = Shoreside.get_shortest_route(origin, destination)
+for onode in trip_table[name].index:
+    for dnode in trip_table[name].columns:
+        if trip_table[static_periods[0]].loc[onode, dnode]:
+            
+            origin = Shoreside.find_node(onode)
+            destination = Shoreside.find_node(int(dnode))
+            route = Shoreside.get_shortest_route(origin, destination)
+            
+            for l in route:
+                for period in static_periods:
+                    link_flows.loc[l.id, period] += trip_table[period].loc[onode, dnode]
 
-                    for l in route:
-                        flows[l.id] += trip_table.loc[onode, dnode]
-
-        link_flows[name] = flows
+        #link_flows[period] = flows
 
 link_flows.to_csv(r'D:\ShoresideTDM\Output\StaticLinkFlows.csv')
 
-print('Done')
+end_time = time.time()
+runtime = round(end_time - start_time, 1)
+
+print('Static Assignment complete in {} seconds'.format(runtime))
