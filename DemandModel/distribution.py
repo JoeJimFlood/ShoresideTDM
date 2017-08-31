@@ -38,7 +38,7 @@ N = nodes.shape[0] #Number of nodes
 for purpose in attractions.columns:
 
     attraction_share = normalize(nodes[purpose + 'Attractions'].values)
-    attraction_shares = pd.DataFrame(np.vstack(N*[attraction_share]), nodes.index, nodes.index)
+    attraction_shares = pd.DataFrame(np.vstack(N*[attraction_share]), nodes.index, nodes.index).fillna(0)
     trip_table = pd.DataFrame(np.zeros((N, N)), nodes.index, nodes.index)
     for node in trip_table.columns:
         trip_table[node] = nodes[purpose + 'Productions'] * attraction_shares[node]
