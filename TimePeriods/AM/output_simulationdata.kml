@@ -31718,68 +31718,68 @@
 <Folder><name>Traffic Detector</name> 
 </Folder>
 <Folder><name>Node Bottleneck</name> 
-<Placemark id="Bottleneck 43 ">
-<name>Bottleneck 43 </name><description><![CDATA[<img src='http://chart.apis.google.com/chart?cht=p&amp;chd=t:<description><![CDATA[<img src='http://chart.apis.google.com/chart?cht=p3&amp;chd=t:0.013077,0.000000,0.002980,29.498281&amp;chs=500x150&amp;chf=bg,s,ffffff00&amp;chco=FF7800&amp;chl=20:%200.0(hr)%7C20:%200.0(hr)%7C19:%200.0(hr)%7C:%2029.5(hr)'>]]></description><LookAt><longitude>1.180605</longitude>
+<Placemark id="Bottleneck 28 ">
+<name>Bottleneck 28 </name><description><![CDATA[<img src='http://chart.apis.google.com/chart?cht=p&amp;chd=t:<description><![CDATA[<img src='http://chart.apis.google.com/chart?cht=p3&amp;chd=t:0.021527,0.000404,0.000684,8.274571&amp;chs=500x150&amp;chf=bg,s,ffffff00&amp;chco=FF7800&amp;chl=10:%200.0(hr)%7C10:%200.0(hr)%7C19:%200.0(hr)%7C:%208.3(hr)'>]]></description><LookAt><longitude>1.180605</longitude>
+<latitude>0.621371</latitude>
+<altitude>0</altitude>
+<range>3200000</range>
+<tilt>0</tilt>			<heading>0</heading>		</LookAt>		<Style>			<IconStyle>				<scale>2.17107</scale>				<Icon><href>http://chart.apis.google.com/chart?cht=p&amp;chd=t:0.021527,0.000404,0.000684,8.274571&amp;chs=12x12&amp;chf=bg,s,ffffff00&amp;chco=FF7800</href>				</Icon>			</IconStyle>			</Style>		<Point>
+<coordinates>1.180605,0.621371,0</coordinates>
+</Point>
+</Placemark><Placemark id="Bottleneck 43 ">
+<name>Bottleneck 43 </name><description><![CDATA[<img src='http://chart.apis.google.com/chart?cht=p&amp;chd=t:<description><![CDATA[<img src='http://chart.apis.google.com/chart?cht=p3&amp;chd=t:0.013237,0.001652,0.001874,4.910419&amp;chs=500x150&amp;chf=bg,s,ffffff00&amp;chco=FF7800&amp;chl=20:%200.0(hr)%7C20:%200.0(hr)%7C19:%200.0(hr)%7C:%204.9(hr)'>]]></description><LookAt><longitude>1.180605</longitude>
 <latitude>1.242742</latitude>
 <altitude>0</altitude>
 <range>3200000</range>
-<tilt>0</tilt>			<heading>0</heading>		</LookAt>		<Style>			<IconStyle>				<scale>2.17107</scale>				<Icon><href>http://chart.apis.google.com/chart?cht=p&amp;chd=t:0.013077,0.000000,0.002980,29.498281&amp;chs=31x31&amp;chf=bg,s,ffffff00&amp;chco=FF7800</href>				</Icon>			</IconStyle>			</Style>		<Point>
+<tilt>0</tilt>			<heading>0</heading>		</LookAt>		<Style>			<IconStyle>				<scale>2.17107</scale>				<Icon><href>http://chart.apis.google.com/chart?cht=p&amp;chd=t:0.013237,0.001652,0.001874,4.910419&amp;chs=7x7&amp;chf=bg,s,ffffff00&amp;chco=FF7800</href>				</Icon>			</IconStyle>			</Style>		<Point>
 <coordinates>1.180605,1.242742,0</coordinates>
 </Point>
 </Placemark><Placemark id="Bottleneck 54 ">
-<name>Bottleneck 54 </name><description><![CDATA[<img src='http://chart.apis.google.com/chart?cht=p&amp;chd=t:<description><![CDATA[<img src='http://chart.apis.google.com/chart?cht=p3&amp;chd=t:0.000000,11.370008&amp;chs=500x150&amp;chf=bg,s,ffffff00&amp;chco=FF7800&amp;chl=30:%200.0(hr)%7C:%2011.4(hr)'>]]></description><LookAt><longitude>1.180605</longitude>
+<name>Bottleneck 54 </name><description><![CDATA[<img src='http://chart.apis.google.com/chart?cht=p&amp;chd=t:<description><![CDATA[<img src='http://chart.apis.google.com/chart?cht=p3&amp;chd=t:0.000000,4.798216&amp;chs=500x150&amp;chf=bg,s,ffffff00&amp;chco=FF7800&amp;chl=30:%200.0(hr)%7C:%204.8(hr)'>]]></description><LookAt><longitude>1.180605</longitude>
 <latitude>1.864113</latitude>
 <altitude>0</altitude>
 <range>3200000</range>
-<tilt>0</tilt>			<heading>0</heading>		</LookAt>		<Style>			<IconStyle>				<scale>2.17107</scale>				<Icon><href>http://chart.apis.google.com/chart?cht=p&amp;chd=t:0.000000,11.370008&amp;chs=12x12&amp;chf=bg,s,ffffff00&amp;chco=FF7800</href>				</Icon>			</IconStyle>			</Style>		<Point>
+<tilt>0</tilt>			<heading>0</heading>		</LookAt>		<Style>			<IconStyle>				<scale>2.17107</scale>				<Icon><href>http://chart.apis.google.com/chart?cht=p&amp;chd=t:0.000000,4.798216&amp;chs=7x7&amp;chf=bg,s,ffffff00&amp;chco=FF7800</href>				</Icon>			</IconStyle>			</Style>		<Point>
 <coordinates>1.180605,1.864113,0</coordinates>
 </Point>
-</Placemark><Placemark id="Bottleneck 58 ">
-<name>Bottleneck 58 </name><description><![CDATA[<img src='http://chart.apis.google.com/chart?cht=p&amp;chd=t:<description><![CDATA[<img src='http://chart.apis.google.com/chart?cht=p3&amp;chd=t:10.621699,0.000000,0.002023&amp;chs=500x150&amp;chf=bg,s,ffffff00&amp;chco=FF7800&amp;chl=River:%2010.6(hr)%7CCentroid:%200.0(hr)%7CRiver:%200.0(hr)'>]]></description><LookAt><longitude>1.149536</longitude>
-<latitude>2.485484</latitude>
-<altitude>0</altitude>
-<range>3200000</range>
-<tilt>0</tilt>			<heading>0</heading>		</LookAt>		<Style>			<IconStyle>				<scale>2.17107</scale>				<Icon><href>http://chart.apis.google.com/chart?cht=p&amp;chd=t:10.621699,0.000000,0.002023&amp;chs=11x11&amp;chf=bg,s,ffffff00&amp;chco=FF7800</href>				</Icon>			</IconStyle>			</Style>		<Point>
-<coordinates>1.149536,2.485484,0</coordinates>
-</Point>
 </Placemark><Placemark id="Bottleneck 94 ">
-<name>Bottleneck 94 </name><description><![CDATA[<img src='http://chart.apis.google.com/chart?cht=p&amp;chd=t:<description><![CDATA[<img src='http://chart.apis.google.com/chart?cht=p3&amp;chd=t:186.768540&amp;chs=500x150&amp;chf=bg,s,ffffff00&amp;chco=FF7800&amp;chl=Centroid:%20186.8(hr)'>]]></description><LookAt><longitude>-1.145554</longitude>
+<name>Bottleneck 94 </name><description><![CDATA[<img src='http://chart.apis.google.com/chart?cht=p&amp;chd=t:<description><![CDATA[<img src='http://chart.apis.google.com/chart?cht=p3&amp;chd=t:133.630598&amp;chs=500x150&amp;chf=bg,s,ffffff00&amp;chco=FF7800&amp;chl=Centroid:%20133.6(hr)'>]]></description><LookAt><longitude>-1.145554</longitude>
 <latitude>1.993099</latitude>
 <altitude>0</altitude>
 <range>3200000</range>
-<tilt>0</tilt>			<heading>0</heading>		</LookAt>		<Style>			<IconStyle>				<scale>2.17107</scale>				<Icon><href>http://chart.apis.google.com/chart?cht=p&amp;chd=t:186.768540&amp;chs=200x200&amp;chf=bg,s,ffffff00&amp;chco=FF7800</href>				</Icon>			</IconStyle>			</Style>		<Point>
+<tilt>0</tilt>			<heading>0</heading>		</LookAt>		<Style>			<IconStyle>				<scale>2.17107</scale>				<Icon><href>http://chart.apis.google.com/chart?cht=p&amp;chd=t:133.630598&amp;chs=200x200&amp;chf=bg,s,ffffff00&amp;chco=FF7800</href>				</Icon>			</IconStyle>			</Style>		<Point>
 <coordinates>-1.145554,1.993099,0</coordinates>
 </Point>
 </Placemark><Placemark id="Bottleneck 529 ">
-<name>Bottleneck 529 </name><description><![CDATA[<img src='http://chart.apis.google.com/chart?cht=p&amp;chd=t:<description><![CDATA[<img src='http://chart.apis.google.com/chart?cht=p3&amp;chd=t:26.028405&amp;chs=500x150&amp;chf=bg,s,ffffff00&amp;chco=FF7800&amp;chl=:%2026.0(hr)'>]]></description><LookAt><longitude>1.624301</longitude>
+<name>Bottleneck 529 </name><description><![CDATA[<img src='http://chart.apis.google.com/chart?cht=p&amp;chd=t:<description><![CDATA[<img src='http://chart.apis.google.com/chart?cht=p3&amp;chd=t:20.074823&amp;chs=500x150&amp;chf=bg,s,ffffff00&amp;chco=FF7800&amp;chl=:%2020.1(hr)'>]]></description><LookAt><longitude>1.624301</longitude>
 <latitude>3.203944</latitude>
 <altitude>0</altitude>
 <range>3200000</range>
-<tilt>0</tilt>			<heading>0</heading>		</LookAt>		<Style>			<IconStyle>				<scale>2.17107</scale>				<Icon><href>http://chart.apis.google.com/chart?cht=p&amp;chd=t:26.028405&amp;chs=27x27&amp;chf=bg,s,ffffff00&amp;chco=FF7800</href>				</Icon>			</IconStyle>			</Style>		<Point>
+<tilt>0</tilt>			<heading>0</heading>		</LookAt>		<Style>			<IconStyle>				<scale>2.17107</scale>				<Icon><href>http://chart.apis.google.com/chart?cht=p&amp;chd=t:20.074823&amp;chs=30x30&amp;chf=bg,s,ffffff00&amp;chco=FF7800</href>				</Icon>			</IconStyle>			</Style>		<Point>
 <coordinates>1.624301,3.203944,0</coordinates>
 </Point>
 </Placemark><Placemark id="Bottleneck 534 ">
-<name>Bottleneck 534 </name><description><![CDATA[<img src='http://chart.apis.google.com/chart?cht=p&amp;chd=t:<description><![CDATA[<img src='http://chart.apis.google.com/chart?cht=p3&amp;chd=t:26.131757&amp;chs=500x150&amp;chf=bg,s,ffffff00&amp;chco=FF7800&amp;chl=:%2026.1(hr)'>]]></description><LookAt><longitude>1.728890</longitude>
+<name>Bottleneck 534 </name><description><![CDATA[<img src='http://chart.apis.google.com/chart?cht=p&amp;chd=t:<description><![CDATA[<img src='http://chart.apis.google.com/chart?cht=p3&amp;chd=t:20.308513&amp;chs=500x150&amp;chf=bg,s,ffffff00&amp;chco=FF7800&amp;chl=:%2020.3(hr)'>]]></description><LookAt><longitude>1.728890</longitude>
 <latitude>3.114355</latitude>
 <altitude>0</altitude>
 <range>3200000</range>
-<tilt>0</tilt>			<heading>0</heading>		</LookAt>		<Style>			<IconStyle>				<scale>2.17107</scale>				<Icon><href>http://chart.apis.google.com/chart?cht=p&amp;chd=t:26.131757&amp;chs=27x27&amp;chf=bg,s,ffffff00&amp;chco=FF7800</href>				</Icon>			</IconStyle>			</Style>		<Point>
+<tilt>0</tilt>			<heading>0</heading>		</LookAt>		<Style>			<IconStyle>				<scale>2.17107</scale>				<Icon><href>http://chart.apis.google.com/chart?cht=p&amp;chd=t:20.308513&amp;chs=30x30&amp;chf=bg,s,ffffff00&amp;chco=FF7800</href>				</Icon>			</IconStyle>			</Style>		<Point>
 <coordinates>1.728890,3.114355,0</coordinates>
 </Point>
 </Placemark><Placemark id="Bottleneck 565 ">
-<name>Bottleneck 565 </name><description><![CDATA[<img src='http://chart.apis.google.com/chart?cht=p&amp;chd=t:<description><![CDATA[<img src='http://chart.apis.google.com/chart?cht=p3&amp;chd=t:25.985771&amp;chs=500x150&amp;chf=bg,s,ffffff00&amp;chco=FF7800&amp;chl=:%2026.0(hr)'>]]></description><LookAt><longitude>-0.731625</longitude>
+<name>Bottleneck 565 </name><description><![CDATA[<img src='http://chart.apis.google.com/chart?cht=p&amp;chd=t:<description><![CDATA[<img src='http://chart.apis.google.com/chart?cht=p3&amp;chd=t:20.680340&amp;chs=500x150&amp;chf=bg,s,ffffff00&amp;chco=FF7800&amp;chl=:%2020.7(hr)'>]]></description><LookAt><longitude>-0.731625</longitude>
 <latitude>3.385892</latitude>
 <altitude>0</altitude>
 <range>3200000</range>
-<tilt>0</tilt>			<heading>0</heading>		</LookAt>		<Style>			<IconStyle>				<scale>2.17107</scale>				<Icon><href>http://chart.apis.google.com/chart?cht=p&amp;chd=t:25.985771&amp;chs=27x27&amp;chf=bg,s,ffffff00&amp;chco=FF7800</href>				</Icon>			</IconStyle>			</Style>		<Point>
+<tilt>0</tilt>			<heading>0</heading>		</LookAt>		<Style>			<IconStyle>				<scale>2.17107</scale>				<Icon><href>http://chart.apis.google.com/chart?cht=p&amp;chd=t:20.680340&amp;chs=30x30&amp;chf=bg,s,ffffff00&amp;chco=FF7800</href>				</Icon>			</IconStyle>			</Style>		<Point>
 <coordinates>-0.731625,3.385892,0</coordinates>
 </Point>
 </Placemark><Placemark id="Bottleneck 571 ">
-<name>Bottleneck 571 </name><description><![CDATA[<img src='http://chart.apis.google.com/chart?cht=p&amp;chd=t:<description><![CDATA[<img src='http://chart.apis.google.com/chart?cht=p3&amp;chd=t:25.891205&amp;chs=500x150&amp;chf=bg,s,ffffff00&amp;chco=FF7800&amp;chl=:%2025.9(hr)'>]]></description><LookAt><longitude>-1.235192</longitude>
+<name>Bottleneck 571 </name><description><![CDATA[<img src='http://chart.apis.google.com/chart?cht=p&amp;chd=t:<description><![CDATA[<img src='http://chart.apis.google.com/chart?cht=p3&amp;chd=t:20.368745&amp;chs=500x150&amp;chf=bg,s,ffffff00&amp;chco=FF7800&amp;chl=:%2020.4(hr)'>]]></description><LookAt><longitude>-1.235192</longitude>
 <latitude>2.304712</latitude>
 <altitude>0</altitude>
 <range>3200000</range>
-<tilt>0</tilt>			<heading>0</heading>		</LookAt>		<Style>			<IconStyle>				<scale>2.17107</scale>				<Icon><href>http://chart.apis.google.com/chart?cht=p&amp;chd=t:25.891205&amp;chs=27x27&amp;chf=bg,s,ffffff00&amp;chco=FF7800</href>				</Icon>			</IconStyle>			</Style>		<Point>
+<tilt>0</tilt>			<heading>0</heading>		</LookAt>		<Style>			<IconStyle>				<scale>2.17107</scale>				<Icon><href>http://chart.apis.google.com/chart?cht=p&amp;chd=t:20.368745&amp;chs=30x30&amp;chf=bg,s,ffffff00&amp;chco=FF7800</href>				</Icon>			</IconStyle>			</Style>		<Point>
 <coordinates>-1.235192,2.304712,0</coordinates>
 </Point>
 </Placemark></Folder>
