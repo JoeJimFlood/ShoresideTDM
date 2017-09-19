@@ -4,16 +4,35 @@ start_time = time.time()
 import numpy as np
 import pandas as pd
 import os
+from collections import OrderedDict
+import openmatrix as omx
 
-SHORTEST_PATH_FILE = r'D:\ShoresideTDM\Network\shortest_paths.txt'
+SHORTEST_PATH_FILE = r'D:\ShoresideTDM\Network\shortest_paths.omx'
 TIME_PERIOD_FILE = r'D:\ShoresideTDM\Network\TimePeriods.csv'
 LINK_FILE = r'D:\ShoresideTDM\DTA_Base\input_link.csv'
+NODE_FILE = LINK_FILE.replace('link', 'node')
+NODE_INFO_FILE = r'D:\ShoresideTDM\Network\node_info.csv'
 
 time_periods = pd.read_csv(TIME_PERIOD_FILE)
-shortest_paths = open(SHORTEST_PATH_FILE, 'r').read().split('\n')
 links = pd.read_csv(LINK_FILE, encoding = 'ISO-8859-1')
+nodes = pd.read_csv(NODE_FILE)
+node_info = pd.read_csv(NODE_INFO_FILE)
 
-trip_table = {}
+link_ids = links['link_id']
+node_ids = np.array(node_info[node_info['Type'] > 0]['Node'])
+
+
+shortest_paths = {}
+f = omx.open_file(SHORTEST_PATH_FILE, 'r')
+for l in link_ids:
+    shortest_paths[l] = pd.DataFrame(np.array(f['Link{}'.format(l)]),
+                                     index = f.mapping('Nodes').keys(),
+                                     columns = np.array(list(f.mapping('Nodes').keys())).astype(str))
+f.close()
+
+shortest_paths = pd.Panel(shortest_paths)
+
+trip_tables = OrderedDict()
 static_periods = []
 
 for period in time_periods.index:
@@ -22,39 +41,25 @@ for period in time_periods.index:
         name = time_periods.loc[period, 'Period']
         static_periods.append(name)
         TRIP_TABLE_FILE = r'D:\ShoresideTDM\TimePeriods\{}\trip_table.csv'.format(name)
-        trip_table[name] = pd.read_csv(TRIP_TABLE_FILE, index_col = 0)
+        trip_tables[name] = pd.read_csv(TRIP_TABLE_FILE, index_col = 0).loc[node_ids, np.array(node_ids).astype(str)]
 
-link_flows = pd.DataFrame(np.zeros((len(links.index), len(static_periods)), dtype = np.float64), index = links['link_id'], columns = static_periods)
+trip_tables = pd.Panel(trip_tables)
 
-for path in shortest_paths:
-    (od, path_links) = path.split(': ')
-    (origin, destination) = od.split(' -> ')
-    path_links = path_links.split(', ')
+P = len(static_periods)
+L = len(link_ids)
+N = len(node_ids)
 
-    print(od)
+od_flows = pd.Panel4D(np.zeros((P, L, N, N)),
+                      labels = static_periods,
+                      items = link_ids,
+                      major_axis = node_ids,
+                      minor_axis = node_ids.astype(str))
 
-    for period in static_periods:
-        for link in path_links:
-            link_flows.loc[int(link), period] += trip_table[period].loc[int(origin), destination]
+for period in static_periods:
+    for l in link_ids:
+        od_flows.ix[period, l, :, :] = trip_tables[period] * shortest_paths[l]
 
-raise Exception
-
-##for onode in trip_table[name].index:
-#    for dnode in trip_table[name].columns:
-#        if trip_table[static_periods[0]].loc[onode, dnode]:
-
-#            print('{0} \u2192 {1}'.format(onode, dnode))
-            
-#            origin = Shoreside.find_node(onode)
-#            destination = Shoreside.find_node(int(dnode))
-#            route = Shoreside.get_shortest_route(origin, destination)
-            
-#            for l in route:
-#                for period in static_periods:
-#                    link_flows.loc[l.id, period] += trip_table[period].loc[onode, dnode]
-
-#        #link_flows[period] = flows
-
+link_flows = od_flows.sum(3).sum(2)
 link_flows.to_csv(r'D:\ShoresideTDM\Output\StaticLinkFlows.csv')
 
 end_time = time.time()
