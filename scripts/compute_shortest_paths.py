@@ -3,6 +3,7 @@ import pandas as pd
 import os
 import time
 from datetime import datetime, timedelta
+import openmatrix as omx
 
 class node:
     def __init__(self, id, x, y, cycle_length):
@@ -230,14 +231,22 @@ class network:
 BASE_PATH = os.path.split(os.path.split(os.path.realpath(__file__))[0])[0]
 NODE_FILE = os.path.join(BASE_PATH, r'DTA_Base\input_node.csv')
 LINK_FILE = NODE_FILE.replace('node', 'link')
+NODE_INFO_FILE = os.path.join(BASE_PATH, 'Network', 'node_info.csv')
 MOVEMENT_FILE = LINK_FILE.replace('link', 'movement')
-OUTPUT_FILE = os.path.join(BASE_PATH, r'Network\shortest_paths.txt')
+OUTPUT_FILE = os.path.join(BASE_PATH, r'Network\shortest_paths.omx')
 
 Shoreside = network.from_files(NODE_FILE, LINK_FILE)
+node_info = pd.read_csv(NODE_INFO_FILE)
+activity_nodes = list(node_info[node_info['Type'] > 0]['Node'])
+external_nodes = list(node_info[node_info['Type'] == 4]['Node'])
 
-lines = []
+node_ids = [n.id for n in Shoreside.nodes]
+link_ids = [l.id for l in Shoreside.links]
 
-N = len(Shoreside.nodes)**2
+shortest_paths = pd.Panel(np.zeros((len(link_ids), len(activity_nodes), len(activity_nodes)), np.uint8),
+                          items = link_ids, major_axis = activity_nodes, minor_axis = activity_nodes)
+
+N = len(activity_nodes)**2
 
 i = 0
 current_percent = 0
@@ -247,11 +256,10 @@ start_time = datetime.now()
 
 percent_times = np.array([])
 
-for onode in Shoreside.nodes:
-    for dnode in Shoreside.nodes:
+for onode_id in activity_nodes:
+    for dnode_id in activity_nodes:
 
-        if onode == dnode:
-            continue
+        i += 1
 
         if 100*i//N > current_percent:
             
@@ -263,13 +271,34 @@ for onode in Shoreside.nodes:
             
             print('{0}%, {1}'.format(current_percent, projected_end.strftime('%d %B %Y %H:%M:%S')))
 
-        path = Shoreside.get_shortest_route(onode, dnode)
-        line = '{0} -> {1}: '.format(onode.id, dnode.id) + ', '.join([str(path_link.id) for path_link in path])
-        lines.append(line)
-        i += 1
+        if onode_id == dnode_id:
+            continue
 
-f = open(OUTPUT_FILE, 'w')
-f.write('\n'.join(lines))
+        if onode_id not in external_nodes and dnode_id not in external_nodes:
+            continue
+
+        onode = Shoreside.find_node(onode_id)
+        dnode = Shoreside.find_node(dnode_id)
+
+        path = Shoreside.get_shortest_route(onode, dnode)
+        for link_path in path:
+            shortest_paths.ix[link_path.id, onode.id, dnode.id] = 1
+
+        #if onode.id == 94 and dnode.id == 16:
+        #    print('\n'.join(path))
+        #    raise Exception
+
+        #line = '{0} -> {1}: '.format(onode.id, dnode.id) + ', '.join([str(path_link.id) for path_link in path])
+        #lines.append(line)
+
+write_start = time.time()
+f = omx.open_file(OUTPUT_FILE, 'w')
+f.create_mapping('Nodes', activity_nodes)
+for link_id in link_ids:
+    f['Link{}'.format(link_id)] = shortest_paths[link_id].values
 f.close()
+write_end = time.time()
+write_time = write_end - write_start
+print('File written in {} seconds'.format(round(write_time, 1)))
 
 print('Shortest paths computed')
