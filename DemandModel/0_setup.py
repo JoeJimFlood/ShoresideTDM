@@ -14,27 +14,28 @@ BATCH_FILE = os.path.join(DEMAND_MODEL_PATH, 'Model.bat')
 
 DTALite_PATH = r'D:\DTALite'
 
-batch_lines = ['cd {}\DemandModel'.format(BASE_PATH),
-               'python 1_generation.py',
-               'python 2_distribution.py',
-               'python 3_tod.py',
-               'python 4_static_assignment.py']
+batch_lines = [r'python 1_generation.py'.format(DEMAND_MODEL_PATH),
+               r'python 2_distribution.py'.format(DEMAND_MODEL_PATH),
+               r'python 3_tod.py'.format(DEMAND_MODEL_PATH),
+               r'python 4_static_assignment.py'.format(DEMAND_MODEL_PATH)]
 
+os.mkdir(os.path.join(BASE_PATH, 'TimePeriods'))
 time_periods = pd.read_csv(TIME_PERIOD_FILE, index_col = 0)
 for period in time_periods.index:
-    time_period_path = os.path.join(BASE_PATH, r'TimePeriods\{}'.format(period))
+    time_period_path = os.path.join(BASE_PATH, 'TimePeriods', period)
     os.mkdir(time_period_path)
     dta = time_periods.loc[period, 'DTA']
     if dta:
         copy(os.path.join(DTALite_PATH, 'DTALite.exe'), time_period_path)
         for f in os.listdir(DTA_BASE_PATH):
             copy(os.path.join(DTA_BASE_PATH, f), time_period_path)
-        batch_lines.append('cd {0}\TimePeriods\{1}'.format(BASE_PATH, period))
-        batch_lines.append('DTALite.exe')
+        batch_lines.append(r'cd {0}\TimePeriods\{1}'.format(BASE_PATH, period))
+        batch_lines.append(r'DTALite.exe'.format(BASE_PATH, period))
 
-batch_lines.append('cd {}\DemandModel'.format(BASE_PATH))
-batch_lines.append('python 5_spectral_post_processing.py')
-batch_lines.append('python 6_cleanup.py')
+batch_lines.append(r'cd {}\DemandModel'.format(BASE_PATH))
+batch_lines.append(r'python 5_spectral_post_processing.py'.format(DEMAND_MODEL_PATH))
+batch_lines.append(r'python 6_cleanup.py'.format(DEMAND_MODEL_PATH))
+batch_lines.append('pause')
 
 f = open(BATCH_FILE, 'w')
 f.write('\n'.join(batch_lines))

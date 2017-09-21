@@ -17,7 +17,7 @@
 #        os.remove(os.path.join(time_period_path, f))
 #    os.rmdir(time_period_path)
 
-print('Done')
+#print('Done')
 
 #os.system('python ' + os.path.join(DEMAND_MODEL_PATH, 'generation.py'))
 #os.system('python ' + os.path.join(DEMAND_MODEL_PATH, 'distribution.py'))

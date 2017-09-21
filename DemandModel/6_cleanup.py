@@ -13,6 +13,7 @@ for period in time_periods.index:
     for f in os.listdir(time_period_path):
         os.remove(os.path.join(time_period_path, f))
     os.rmdir(time_period_path)
+os.rmdir(os.path.join(BASE_PATH, 'TimePeriods'))
 
 end_time = time.time()
 run_time = end_time - start_time
