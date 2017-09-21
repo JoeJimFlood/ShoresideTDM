@@ -1,17 +1,20 @@
+from __future__ import division
 import time
 start_time = time.time()
 
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import stp11 as stp
-#import spectranspo as stp
 import os
+import sys
 
 BASE_PATH = os.path.split(os.path.split(os.path.realpath(__file__))[0])[0]
 OUTPUT_PATH = os.path.join(BASE_PATH, 'Output')
 TIME_PERIOD_FILE = os.path.join(BASE_PATH, r'Network\TimePeriods.csv')
 STATIC_FLOWS_FILE = os.path.join(BASE_PATH, r'Output\StaticLinkFlows.csv')
+
+sys.path.append(os.path.join(BASE_PATH, 'DemandModel'))
+from tools import spectral
 
 def quarterhourize(minute):
     '''
@@ -78,6 +81,9 @@ for period in time_periods.index:
         grouped_data = grouped_data.pivot(index = 'link_id', columns = 'quarter_hour', values = flowcol)
         
         period_breaks = list(np.arange(start, end, 0.25))
+        #print(link_flows)
+        #print('\n')
+        #print(grouped_data)
         link_flows[period_breaks] = grouped_data[period_breaks]
 
     else:
@@ -100,7 +106,7 @@ for link_id in links_of_interest.keys():
     proceed = False
     while not proceed:
         try:
-            dists[link_id] = stp.TimeDist.from_bins(np.array(link_flows.loc[link_id]), np.array(link_flows.columns), K+1)
+            dists[link_id] = spectral.Profile.from_bins(np.array(link_flows.loc[link_id]), np.array(link_flows.columns), K+1)
             proceed = True
         except OverflowError:
             K -= 1
@@ -119,7 +125,10 @@ def pack(dists, K, dtype = np.float16):
     for link_id in dists.keys():
         outdata.loc[link_id, 'L0'] = dtype(np.real(dists[link_id].L.c[0]) + np.log(dists[link_id].total))
         for k in range(1, K+1):
-            Lk = dists[link_id].L.c[k]
+            try:
+                Lk = dists[link_id].L.c[k]
+            except IndexError:
+                Lk = 0
             outdata.loc[link_id, 'L%dre'%(k)] = dtype(np.real(Lk))
             outdata.loc[link_id, 'L%dim'%(k)] = dtype(np.imag(Lk))
 
@@ -128,7 +137,7 @@ def pack(dists, K, dtype = np.float16):
     return outdata
 
 outdata = pack(dists, max_fc)
-outdata.to_csv(os.path.join(OUTPUT_PATH, 'Distributions.csv'))
+outdata.to_csv(os.path.join(OUTPUT_PATH, 'Profiles.csv'))
 
 def plot_links(dists, link_ids, ymax, title, font_size, font, fp = None):
     '''
