@@ -6,6 +6,7 @@ import pandas as pd
 import os
 from collections import OrderedDict
 import openmatrix as omx
+import sys
 
 SHORTEST_PATH_FILE = r'D:\ShoresideTDM\Network\shortest_paths.omx'
 TIME_PERIOD_FILE = r'D:\ShoresideTDM\Network\TimePeriods.csv'
@@ -21,9 +22,11 @@ node_info = pd.read_csv(NODE_INFO_FILE)
 link_ids = links['link_id']
 node_ids = np.array(node_info[node_info['Type'] > 0]['Node'])
 
-
 shortest_paths = {}
-f = omx.open_file(SHORTEST_PATH_FILE, 'r')
+if sys.version[0] == '2':
+    f = omx.openFile(SHORTEST_PATH_FILE, 'r')
+elif sys.version[0] == '3':
+    f = omx.open_file(SHORTEST_PATH_FILE, 'r')
 for l in link_ids:
     shortest_paths[l] = pd.DataFrame(np.array(f['Link{}'.format(l)]),
                                      index = f.mapping('Nodes').keys(),
