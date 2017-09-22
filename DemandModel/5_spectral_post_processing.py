@@ -99,7 +99,7 @@ links_of_interest = {1321: ('Inbound Skyrider', '#c0c0c0', '-'),
 
 dists = {}
 
-max_fc = 3
+max_fc = 5
 
 for link_id in links_of_interest.keys():
     K = max_fc
@@ -136,8 +136,48 @@ def pack(dists, K, dtype = np.float16):
 
     return outdata
 
-outdata = pack(dists, max_fc)
-outdata.to_csv(os.path.join(OUTPUT_PATH, 'Profiles.csv'))
+#outdata = pack(dists, max_fc)
+#outdata.to_csv(os.path.join(OUTPUT_PATH, 'Profiles.csv'))
+
+def plot_link(dists, data, link_id, title, font_size, font, fp = None):
+    '''
+    Plots a profile with a bar graph it was based on
+    '''
+    plt.figure(figsize = (16, 9))
+
+    
+
+    link_data = data.loc[link_id]
+
+    locs = np.array(link_data.index)
+    widths = np.diff(np.append(locs, 24))
+    heights = np.array(link_data) / widths
+
+    ymax = 1.25*(heights.max())
+    for i in range(0, 25, 3):
+        plt.plot([i, i], [0, ymax], color = 'k')
+
+    plt.bar(locs, heights, widths, color = '#c0c0c0', edgecolor = 'k', align = 'edge')
+    dists[link_id].plot(1440, pdf = False, linewidth = 3, color = '#0000ff')
+
+    xticks = list(range(25))
+    xlabels = ['12 AM', '', '', '3 AM', '', '', '6 AM', '', '', '9 AM', '', '',
+               '12 PM', '', '', '3 PM', '', '', '6 PM', '', '', '9 PM', '', '',
+               '12 AM']
+
+    plt.xlim(0, 24)
+    plt.ylim(0, ymax)
+    plt.xticks(xticks, xlabels, fontsize = font_size, fontname = font, rotation = 5)
+    plt.ylabel('Flow (Vehicles per Hour)', fontsize = font_size, fontname = font)
+    plt.yticks(fontsize = font_size, fontname = font)
+    plt.title(title, fontsize = font_size, fontname = font, va = 'bottom')
+    plt.grid(True)
+
+    if fp:
+        plt.savefig(fp)
+        plt.clf()
+    else:
+        plt.show()
 
 def plot_links(dists, link_ids, ymax, title, font_size, font, fp = None):
     '''
@@ -181,6 +221,11 @@ def plot_links(dists, link_ids, ymax, title, font_size, font, fp = None):
 
 font = 'Perpetua'
 fs = 32
+
+for link in links_of_interest:
+    title = links_of_interest[link][0]
+    plot_link(dists, link_flows, link, title, fs, font, os.path.join(OUTPUT_PATH, 'Plots', '{}.png'.format(title)))
+
 plot_links(dists, [1295, 1294, 1321, 1320], 15000, 'Bridge Crossings', fs, font, os.path.join(OUTPUT_PATH, r'Plots\BridgeCrossings.png'))
 plot_links(dists, [1273, 1272, 1321, 1320], 17000, 'To/From CBD', fs, font, os.path.join(OUTPUT_PATH, r'Plots\ToFromCBD.png'))
 
