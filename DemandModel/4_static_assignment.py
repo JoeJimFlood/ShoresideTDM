@@ -1,3 +1,4 @@
+from __future__ import division
 import time
 start_time = time.time()
 
@@ -6,6 +7,7 @@ import pandas as pd
 import os
 from collections import OrderedDict
 import openmatrix as omx
+import tables
 import sys
 
 SHORTEST_PATH_FILE = r'D:\ShoresideTDM\Network\shortest_paths.omx'
@@ -23,14 +25,12 @@ link_ids = links['link_id']
 node_ids = np.array(node_info[node_info['Type'] > 0]['Node'])
 
 shortest_paths = {}
-if sys.version[0] == '2':
-    f = omx.openFile(SHORTEST_PATH_FILE, 'r')
-elif sys.version[0] == '3':
-    f = omx.open_file(SHORTEST_PATH_FILE, 'r')
+
+f = omx.open_file(SHORTEST_PATH_FILE, 'r')
 for l in link_ids:
     shortest_paths[l] = pd.DataFrame(np.array(f['Link{}'.format(l)]),
-                                     index = f.mapping('Nodes').keys(),
-                                     columns = np.array(list(f.mapping('Nodes').keys())).astype(str))
+                                        index = f.mapping('Nodes').keys(),
+                                        columns = np.array(list(f.mapping('Nodes').keys())).astype(str))
 f.close()
 
 shortest_paths = pd.Panel(shortest_paths)
@@ -64,6 +64,8 @@ for period in static_periods:
 
 link_flows = od_flows.sum(3).sum(2)
 link_flows.to_csv(r'D:\ShoresideTDM\Output\StaticLinkFlows.csv')
+print('Trip Table: {}'.format(trip_tables['MD', 104, '530']))
+print('Shortest Path: {}'.format(shortest_paths[1295, 104, '530']))
 
 end_time = time.time()
 runtime = round(end_time - start_time, 1)
