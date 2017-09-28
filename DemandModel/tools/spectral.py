@@ -204,15 +204,19 @@ class Profile():
             '''
             Inverse of realify
             '''
-            N = len(array)/2
-            return array[:N] + 1j*array[N:]
+            N = int(len(array)/2)
+            try:
+                return array[:N] + 1j*array[N:]
+            except TypeError:
+                print(N)
+                raise Exception
 
         def contract(array):
             '''
             Returns the zero and positive-indexed Fourier series components
             '''
             N = len(array)
-            return array[:(N+1)/2]
+            return array[:int((N+1)/2)]
 
         def expand(array):
             '''
@@ -260,8 +264,8 @@ class Profile():
                     b = 24
                 else:
                     b = np.array(breaks)[hr+1]
-                x = t[a*(1440/24):b*(1440/24)+1]
-                y = p_fit[a*(1440/24):b*(1440/24)+1]
+                x = t[int(a*(1440/24)):int(b*(1440/24)+1)]
+                y = p_fit[int(a*(1440/24)):int(b*(1440/24)+1)]
                 try:
                     p_hr += [simps(y, x)]
                 except IndexError:
