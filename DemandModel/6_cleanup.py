@@ -8,6 +8,7 @@ BASE_PATH = os.path.split(os.path.split(os.path.realpath(__file__))[0])[0]
 TIME_PERIOD_FILE = os.path.join(BASE_PATH, r'Network\TimePeriods.csv')
 time_periods = pd.read_csv(TIME_PERIOD_FILE, index_col = 0)
 
+#Remove all time period folders, as they are very large
 for period in time_periods.index:
     time_period_path = os.path.join(BASE_PATH, r'TimePeriods\{}'.format(period))
     for f in os.listdir(time_period_path):

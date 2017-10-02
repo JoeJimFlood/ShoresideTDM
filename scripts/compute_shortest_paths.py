@@ -284,13 +284,6 @@ for onode_id in activity_nodes:
         for link_path in path:
             shortest_paths.ix[link_path.id, onode.id, dnode.id] = 1
 
-        #if onode.id == 94 and dnode.id == 16:
-        #    print('\n'.join(path))
-        #    raise Exception
-
-        #line = '{0} -> {1}: '.format(onode.id, dnode.id) + ', '.join([str(path_link.id) for path_link in path])
-        #lines.append(line)
-
 write_start = time.time()
 f = omx.open_file(OUTPUT_FILE, 'w')
 f.create_mapping('Nodes', activity_nodes)

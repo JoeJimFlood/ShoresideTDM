@@ -1,0 +1,19 @@
+LinkID,Name,Color,Linestyle
+1321,Inbound Skyrider,#c0c0c0,-
+1320,Outbound Skyrider,#c0c0c0,--
+1295,Eastbound 50 Street Bridge,#8040a0,-
+1294,Westbound 50 Street Bridge,#8040a0,--
+1273,Inbound Eastern Bank Freeway,#008040,-
+1272,Outbound Eastern Bank Freeway,#008040,--
+1233,Inbound Shore Drive,#0000f0,-
+1232,Outbound Shore Drive,#0000f0,--
+1238,Northbound Eastern Bank Freeway (S of 10 Street),#6699cc,-
+1239,Southbound Eastern Bank Freeway (S of 10 Street),#6699cc,--
+1319,Skyrider Exit Ramp,#000000,-
+1318,Skyrider Entrance Ramp,#000000,--
+1315,Eastbound 10 Street Viaduct,#91a3b0,-
+1314,Westbound 10 Street Viaduct,#91a3b0,--
+47,Inbound River Drive,#01796f,-
+46,Outbound River Drive,#01796f,--
+1346,Inbound Western Bank Freeway,#4a5d23,-
+1347,Outbound Western Bank Freeway,#4a5d23,--

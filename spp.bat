@@ -1,0 +1,3 @@
+cd DemandModel
+python 5_spectral_post_processing.py
+pause

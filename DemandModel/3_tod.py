@@ -18,35 +18,16 @@ PEAK_FILE = os.path.join(NETWORK_PATH, 'peaks.csv')
 
 DTA_START_UP_TIME = 1 #Time to set up DTA in hours
 
-def cdf(peaks, start, end):
-    '''
-    Computes the cdf between two time points for the given combination of Von Mises distributions
-    '''
-    out = 0
-    for peak in peaks.index:
-        contribution = peaks.loc[peak, 'Contribution']
-        mu = peaks.loc[peak, 'Mean']*pi/12
-        kappa = peaks.loc[peak, 'Concentration']
-        out += contribution*(vm.cdf(end*pi/12, kappa, loc = mu) - vm.cdf(start*pi/12, kappa, loc = mu))
-    return out
-
-def convert_time_format(t):
-    '''
-    CONVERTS TIME!
-    '''
-    minute_map = {0: '00', 0.25: '15', 0.5: '30', 0.75: '45'}
-    hour = str(int(t // 1) % 24)
-    hour = (2 - len(hour))*'0' + hour
-    minute = minute_map[t % 1]
-    return "'{0}:{1}".format(hour, minute)
+sys.path.append(os.path.join(BASE_PATH, 'DemandModel'))
+from tools import tod
 
 attractions = pd.read_csv(ATTRACTIONS_FILE, index_col = 0)
 purposes = attractions.columns.tolist()
-
 time_periods = pd.read_csv(TIME_PERIOD_FILE, index_col = 0)
 peaks = pd.read_csv(PEAK_FILE)
 node_info = pd.read_csv(NODE_INFO_FILE, index_col = 0)
 
+#Define start times of each sub-period. Start time for static periods, and 15-minute increments for dynamic periods
 breaks = {}
 for period in time_periods.index:
     start = time_periods.loc[period, 'Start']
@@ -61,6 +42,7 @@ for period in time_periods.index:
 
 N = len(node_info.index)
 
+#Create the total number of trips within each sub-interval in each time period
 total_trips = {}
 for period in time_periods.index:
     T = len(breaks[period])
@@ -74,6 +56,7 @@ for period in time_periods.index:
 
     for purpose in purposes:
     
+        #Convert start and end times of each sub-period to angles of earth's rotation
         if DTA:
             starts = pi/12*np.array(breaks[period])
             ends = pi/12*np.array(breaks[period][1:] + [breaks[period][-1] + 0.25])
@@ -84,18 +67,21 @@ for period in time_periods.index:
                 ends += 2*pi
         trip_tables[purpose] = pd.read_csv(os.path.join(OUTPUT_PATH, '{}_trip_table.csv'.format(purpose)), index_col = 0)
 
+        #Sum total origins and destinations
         total_origins = trip_tables[purpose].sum(1)
         total_destinations = trip_tables[purpose].sum(0)
 
         origin_nodes = total_origins[total_origins > 0].index.tolist()
         destination_nodes = total_destinations[total_destinations > 0].index.tolist()
 
+        #Read in peaks for each purpose
         purpose_peaks = peaks[peaks['Purpose'] == purpose]
 
         for direction in list(range(2)):
         
             purpose_direction_peaks = purpose_peaks[purpose_peaks['Direction'] == direction]
 
+            #Create profiles for each purpose/direction
             props = np.zeros_like(starts)
             for peak in purpose_direction_peaks.index:
                 current_peak = purpose_direction_peaks.loc[peak]
@@ -105,13 +91,14 @@ for period in time_periods.index:
                 peak_props = vm.cdf(ends, concentration, loc = mean) - vm.cdf(starts, concentration, loc = mean)
                 props += contribution*peak_props
 
+            #Apply profiles to create time-specific trip tables
             for o_node in origin_nodes:
                 for d_node in destination_nodes:
                     daily_trips = trip_tables[purpose].loc[o_node, d_node]
                     try:
-                        if direction:
+                        if direction: #Departure trips
                             total_trips[period].ix[:, int(o_node), int(d_node)] += daily_trips*props
-                        else:
+                        else: #Return trips
                             total_trips[period].ix[:, int(d_node), int(o_node)] += daily_trips*props
                     except KeyError:
                         continue
@@ -122,9 +109,11 @@ for period in time_periods.index:
     end = time_periods.loc[period, 'End']
     DTA = time_periods.loc[period, 'DTA']
 
+    #Save trip tables for static periods
     if not DTA:
         total_trips[period][start].to_csv(os.path.join(BASE_PATH, r'TimePeriods\{}\trip_table.csv'.format(period)))
 
+    #Update time-dependent profile for dynamic periods
     else:
         
         period_trips = total_trips[period]
@@ -137,6 +126,7 @@ for period in time_periods.index:
 
         input_demand_file_list = pd.read_csv(INPUT_DEMAND_FILE_LIST_FILE)
 
+        #For each origin-destination pair, update the number of trips in the input file
         node_list = total_period_trips.index.tolist()
         N = len(node_list)
         input_demand = pd.melt(total_period_trips)
@@ -145,14 +135,17 @@ for period in time_periods.index:
         input_demand['number_of_trips_demand_type1'] = input_demand['value'].round(0)
         input_demand.set_index('from_zone_id')[['to_zone_id', 'number_of_trips_demand_type1']].to_csv(INPUT_DEMAND_FILE)
 
+        #Update time-dependent profile
         input_demand_file_list['start_time_in_min'] = int((time_periods.loc[period, 'Start'] - DTA_START_UP_TIME)*60)
         input_demand_file_list['end_time_in_min'] = int(time_periods.loc[period, 'End']*60)
 
+        #Set all 15-minute periods to zero
         for t in np.arange(0, 24, 0.25):
-            input_demand_file_list.loc[0, convert_time_format(t)] = 0
+            input_demand_file_list.loc[0, tod.convert_time_format(t)] = 0
 
+        #Set desired 15-minute periods
         for t in np.arange(time_periods.loc[period, 'Start'] - DTA_START_UP_TIME, time_periods.loc[period, 'End'], 0.25):
-            input_demand_file_list.loc[0, convert_time_format(t)] = trip_share[t]
+            input_demand_file_list.loc[0, tod.convert_time_format(t)] = trip_share[t]
 
         input_demand_file_list.set_index('scenario_no').to_csv(INPUT_DEMAND_FILE_LIST_FILE)
 

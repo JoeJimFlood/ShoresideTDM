@@ -10,16 +10,22 @@ import sys
 
 BASE_PATH = os.path.split(os.path.split(os.path.realpath(__file__))[0])[0]
 OUTPUT_PATH = os.path.join(BASE_PATH, 'Output')
-TIME_PERIOD_FILE = os.path.join(BASE_PATH, r'Network\TimePeriods.csv')
-STATIC_FLOWS_FILE = os.path.join(BASE_PATH, r'Output\StaticLinkFlows.csv')
+TIME_PERIOD_FILE = os.path.join(BASE_PATH, 'Network', 'TimePeriods.csv')
+MAX_FC_FILE = os.path.join(BASE_PATH, 'Network', 'max_fc.txt')
+LINKS_OF_INTEREST_FILE = os.path.join(BASE_PATH, 'Network', 'LinksOfInterest.csv')
+STATIC_FLOWS_FILE = os.path.join(BASE_PATH, 'Output', 'StaticLinkFlows.csv')
 
 sys.path.append(os.path.join(BASE_PATH, 'DemandModel'))
 from tools import tod, spectral, util
 
 time_periods = pd.read_csv(TIME_PERIOD_FILE, index_col = 0)
 static_flows = pd.read_csv(STATIC_FLOWS_FILE, index_col = 0)
-
 links = static_flows.index.tolist()
+max_fc = int(open(MAX_FC_FILE).read().split('\n')[1])
+
+links_of_interest = dict(pd.read_csv(LINKS_OF_INTEREST_FILE, index_col = 0).T)
+for link_id in links_of_interest:
+    links_of_interest[link_id] = tuple(links_of_interest[link_id])
 
 #Define breaks
 breaks = []
@@ -67,27 +73,21 @@ for period in time_periods.index:
     else:
         link_flows[start] = static_flows[period]
 
-#Define links of interest. This should probably be put in an external file
-links_of_interest = {1321: ('Inbound Skyrider', '#c0c0c0', '-'),
-                     1320: ('Outbound Skyrider', '#c0c0c0', '--'),
-                     1295: ('Eastbound 50 Street Bridge', '#8040a0', '-'),
-                     1294: ('Westbound 50 Street Bridge', '#8040a0', '--'),
-                     1273: ('Inbound Eastern Bank Freeway', '#008040', '-'),
-                     1272: ('Outbound Eastern Bank Freeway', '#008040', '--')}
-
 #Define dictionary for profiles and the maximum number of Fourier coefficients to use
 dists = {}
-max_fc = 5
-
 for link_id in links_of_interest.keys():
-    K = max_fc
-    proceed = False
-    while not proceed:
-        try:
-            dists[link_id] = spectral.Profile.from_bins(np.array(link_flows.loc[link_id]), np.array(link_flows.columns), K+1)
-            proceed = True
-        except OverflowError:
-            K -= 1
+    try:
+        K = max_fc
+        proceed = False
+        while not proceed:
+            try:
+                dists[link_id] = spectral.Profile.from_bins(np.array(link_flows.loc[link_id]), np.array(link_flows.columns), K+1)
+                proceed = True
+            except OverflowError:
+                K -= 1
+    except KeyError:
+        print('KeyError with Link{}'.format(link_id))
+        continue
 
 #Plot and save results
 font = 'Perpetua'
@@ -97,8 +97,14 @@ for link in links_of_interest:
     title = links_of_interest[link][0]
     util.plot_link(dists, link_flows, link, title, fs, font, os.path.join(OUTPUT_PATH, 'Plots', '{}.png'.format(title)))
 
-util.plot_links(dists, [1295, 1294, 1321, 1320], links_of_interest, 15000, 'Bridge Crossings', fs, font, os.path.join(OUTPUT_PATH, r'Plots\BridgeCrossings.png'))
-util.plot_links(dists, [1273, 1272, 1321, 1320], links_of_interest, 17000, 'To/From CBD', fs, font, os.path.join(OUTPUT_PATH, r'Plots\ToFromCBD.png'))
+util.plot_links(dists, [1295, 1294, 1321, 1320], links_of_interest, 15000, 'Bridge Crossings',
+                fs, font, os.path.join(OUTPUT_PATH, r'Plots\BridgeCrossings.png'))
+util.plot_links(dists, [1273, 1272, 1321, 1320], links_of_interest, 17000, 'To/From CBD',
+                fs, font, os.path.join(OUTPUT_PATH, r'Plots\ToFromCBD.png'))
+util.plot_links(dists, [1319, 1318, 1233, 1232], links_of_interest, 17000, 'CBD Entrances',
+                fs, font, os.path.join(OUTPUT_PATH, r'Plots\CBDEntrances.png'))
+util.plot_links(dists, [1238, 1239, 1315, 1314], links_of_interest, 20000, 'CBD Freeways',
+                fs, font, os.path.join(OUTPUT_PATH, r'Plots\CBDFreeways.png'))
 
 outdata = util.pack(dists, max_fc)
 outdata.to_csv(os.path.join(OUTPUT_PATH, 'Profiles.csv'))

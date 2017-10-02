@@ -1,0 +1,2 @@
+#Maximum number of Fourier coefficients to use in curve-fitting
+4
