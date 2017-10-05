@@ -6,6 +6,7 @@ import pandas as pd
 import os
 
 BASE_PATH = os.path.split(os.path.split(os.path.realpath(__file__))[0])[0]
+TIME_LOG = os.path.join(BASE_PATH, 'TimeLog.txt')
 NETWORK_PATH = os.path.join(BASE_PATH, 'Network')
 OUTPUT_PATH = os.path.join(BASE_PATH, 'Output')
 
@@ -39,3 +40,7 @@ nodes.to_csv(GENERATION_OUTPUT_FILE)
 time_end = time.time()
 runtime = round(time_end - time_start, 1)
 print('Trip Generation Complete in {} seconds'.format(runtime))
+
+logfile = open(TIME_LOG, 'a')
+logfile.write('\nGeneration : {}'.format(runtime))
+logfile.close()

@@ -104,6 +104,8 @@ def plot_link(dists, data, link_id, title, font_size, font, fp = None):
     else:
         plt.show()
 
+    plt.close()
+
 def plot_links(dists, link_ids, links_of_interest, ymax, title, font_size, font, fp = None):
     '''
     Plots selected links with the selected titles. Saves plot if a filepath is specified
@@ -149,3 +151,5 @@ def plot_links(dists, link_ids, links_of_interest, ymax, title, font_size, font,
         plt.clf()
     else:
         plt.show()
+
+    plt.close()

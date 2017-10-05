@@ -6,6 +6,7 @@ import os
 from shutil import copy
 
 BASE_PATH = os.path.split(os.path.split(os.path.realpath(__file__))[0])[0]
+TIME_LOG = os.path.join(BASE_PATH, 'TimeLog.txt')
 DEMAND_MODEL_PATH = os.path.join(BASE_PATH, 'DemandModel')
 DTA_BASE_PATH = os.path.join(BASE_PATH, 'DTA_Base')
 TIME_PERIOD_FILE = os.path.join(BASE_PATH, 'Network/TimePeriods.csv')
@@ -45,6 +46,10 @@ f.write('\n'.join(batch_lines))
 f.close()
 
 end_time = time.time()
-run_time = end_time - start_time
+runtime = round(end_time - start_time, 1)
 
-print('Setup complete in {} seconds'.format(round(run_time, 1)))
+print('Setup complete in {} seconds'.format(runtime))
+
+logfile = open(TIME_LOG, 'a')
+logfile.write('\nSetup: {}'.format(runtime))
+logfile.close()

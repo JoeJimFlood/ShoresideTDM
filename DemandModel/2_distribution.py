@@ -6,6 +6,7 @@ import pandas as pd
 import os
 
 BASE_PATH = os.path.split(os.path.split(os.path.realpath(__file__))[0])[0]
+TIME_LOG = os.path.join(BASE_PATH, 'TimeLog.txt')
 OUTPUT_PATH = os.path.join(BASE_PATH, 'Output')
 GENERATION_OUTPUT = os.path.join(OUTPUT_PATH, 'generation_output.csv')
 ATTRACTIONS_FILE = os.path.join(BASE_PATH, r'Network\attractions.csv')
@@ -57,3 +58,7 @@ for purpose in attractions.columns:
 time_end = time.time()
 runtime = round(time_end - time_start, 1)
 print('Trip Distribution Complete in {} seconds'.format(runtime))
+
+logfile = open(TIME_LOG, 'a')
+logfile.write('\nDistribution: {}'.format(runtime))
+logfile.close()

@@ -9,6 +9,7 @@ import os
 import sys
 
 BASE_PATH = os.path.split(os.path.split(os.path.realpath(__file__))[0])[0]
+TIME_LOG = os.path.join(BASE_PATH, 'TimeLog.txt')
 OUTPUT_PATH = os.path.join(BASE_PATH, 'Output')
 TIME_PERIOD_FILE = os.path.join(BASE_PATH, 'Network', 'TimePeriods.csv')
 MAX_FC_FILE = os.path.join(BASE_PATH, 'Network', 'max_fc.txt')
@@ -110,6 +111,10 @@ outdata = util.pack(dists, max_fc)
 outdata.to_csv(os.path.join(OUTPUT_PATH, 'Profiles.csv'))
 
 end_time = time.time()
-run_time = end_time - start_time
+runtime = round(end_time - start_time, 1)
 
-print('Spectral Post-Processing Complete in {} seconds'.format(round(run_time, 1)))
+print('Spectral Post-Processing Complete in {} seconds'.format(runtime))
+
+logfile = open(TIME_LOG, 'a')
+logfile.write('\nSpectral Postprocessing: {}'.format(runtime))
+logfile.close()

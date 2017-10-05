@@ -9,6 +9,7 @@ from scipy.stats.distributions import vonmises as vm
 from math import pi
 
 BASE_PATH = os.path.split(os.path.split(os.path.realpath(__file__))[0])[0]
+TIME_LOG = os.path.join(BASE_PATH, 'TimeLog.txt')
 OUTPUT_PATH = os.path.join(BASE_PATH, 'Output')
 NETWORK_PATH = os.path.join(BASE_PATH, 'Network')
 ATTRACTIONS_FILE = os.path.join(NETWORK_PATH, 'attractions.csv')
@@ -152,3 +153,7 @@ for period in time_periods.index:
 time_end = time.time()
 runtime = round(time_end - time_start, 1)
 print('Time of Day Modeling Complete in {} seconds'.format(runtime))
+
+logfile = open(TIME_LOG, 'a')
+logfile.write('\nTime of Day: {}'.format(runtime))
+logfile.close()

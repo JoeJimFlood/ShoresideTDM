@@ -11,6 +11,7 @@ import tables
 import sys
 
 BASE_PATH = os.path.split(os.path.split(os.path.realpath(__file__))[0])[0]
+TIME_LOG = os.path.join(BASE_PATH, 'TimeLog.txt')
 SHORTEST_PATH_FILE = os.path.join(BASE_PATH, 'Network', 'shortest_paths.omx')
 TIME_PERIOD_FILE = os.path.join(BASE_PATH, 'Network', 'TimePeriods.csv')
 NODE_INFO_FILE = os.path.join(BASE_PATH, 'Network', 'node_info.csv')
@@ -76,3 +77,7 @@ end_time = time.time()
 runtime = round(end_time - start_time, 1)
 
 print('Static Assignment complete in {} seconds'.format(runtime))
+
+logfile = open(TIME_LOG, 'a')
+logfile.write('\nStatic Assignment: {}'.format(runtime))
+logfile.close()

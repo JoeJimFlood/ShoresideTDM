@@ -1,0 +1,12 @@
+==/|\===Shoreside CBD TDM Run Start: 05.10.17.17.59.17===/|\==
+--------------------------------------------------------------
+ 
+Setup: 3.7
+Generation : 0.7
+Distribution: 4.0
+Time of Day: 21.9
+Static Assignment: 19.9
+Spectral Postprocessing: 50.7
+Cleanup: 0.6
+------------------------------------------------------------
+==/|\===Shoreside CBD TDM Run End: 05.10.17.18.16.54===/|\==
